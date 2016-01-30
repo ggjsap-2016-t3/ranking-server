@@ -30,13 +30,17 @@ class RankingServer < Sinatra::Base
       end
     end
 
+		# UPSERT
     DB.transaction do
-      # UPSERT
-      if DB[:results].where(user: result["user"]).update(left: result["left"]) == 0
-        DB[:results].insert(user: result["user"], left: result["left"])
-      end
-    end
-    "OK"
+			old_data = DB[:results].where(user: result["user"]).first
+			if old_data.nil?
+				DB[:results].insert(user: result["user"], left: result["left"])
+			elsif result["left"] > old_data[:left]
+				DB[:results].where(user: result["user"]).update(left: result["left"])
+			end
+		end
+
+		"OK"
   end
 
   get '/ranking' do
