@@ -17,11 +17,11 @@ class RankingServer < Sinatra::Base
 		#File.read(File.join('public', 'index.html'))
 	end
 
-  post '/' do
+  post '/', provides: :json do
     connect_opt = YAML.load_file("./config/config.yml")
     DB = Sequel.postgres('ggjsap2016-t3', connect_opt)
 
-    result = JSON.parse(params[:result])
+		result = JSON.parse(request.body.read)["result"]
 
     unless DB.table_exists?(:results)
       DB.create_table :results do
