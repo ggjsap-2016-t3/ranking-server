@@ -1,5 +1,6 @@
 require 'sinatra/base'
 require 'sinatra/contrib'
+require "sinatra/reloader"
 require 'slim'
 require 'yaml'
 require 'sequel'
@@ -8,13 +9,13 @@ require 'json'
 class RankingServer < Sinatra::Base
   register Sinatra::Contrib
 
-  get '/' do
-    @results = []
-    10.times do
-      @results << Result.new("a" * rand(1..10), 1, rand(1..10))
-    end
-    slim :index
-  end
+	configure :development do
+		register Sinatra::Reloader
+	end
+
+	get '/' do
+		#File.read(File.join('public', 'index.html'))
+	end
 
   post '/' do
     connect_opt = YAML.load_file("./config/config.yml")
@@ -36,6 +37,14 @@ class RankingServer < Sinatra::Base
       end
     end
     "OK"
+  end
+
+  get '/ranking' do
+    @results = []
+    10.times do
+      @results << Result.new("a" * rand(1..10), 1, rand(1..10))
+    end
+    slim :ranking
   end
 
   helpers do
