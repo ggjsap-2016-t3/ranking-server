@@ -12,14 +12,16 @@ class RankingServer < Sinatra::Base
 
   post '/' do
     connect_opt = YAML.load_file("./config/config.yml")
-    DB = Sequel.postgres(nil, connect_opt)
-    
+    DB = Sequel.postgres('ggjsap2016-t3', connect_opt)
+
     result_json = params[:result]
     result = JSON.parse(result_json)
-    DB.create_table :results do 
+    unless DB.table_exists?(:results)
+      DB.create_table :results do
         String :user, primary_key: true
         Integer :stage
         Integer :left
+      end
     end
     results = DB[:results]
     results.insert(user: result[:user], stage: result[:stage], left: result[:left])

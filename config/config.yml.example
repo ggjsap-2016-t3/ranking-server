@@ -1,8 +1,4 @@
 options:
   host: "localhost"
-  port: 5432
   user: "user_name"
   password: "password"
-  database: "ggjsap2016-t3"
-  encoding: "utf8"
-
