@@ -40,10 +40,10 @@ class RankingServer < Sinatra::Base
   end
 
   get '/ranking' do
-    @results = []
-    10.times do
-      @results << Result.new("a" * rand(1..10), 1, rand(1..10))
-    end
+    connect_opt = YAML.load_file("./config/config.yml")
+    DB = Sequel.postgres('ggjsap2016-t3', connect_opt)
+
+    @results = DB[:results].order(Sequel.desc(:left)).limit(10).all
     slim :ranking
   end
 
@@ -52,18 +52,6 @@ class RankingServer < Sinatra::Base
       @title = title if title
       @title ? "#{@title} - GGJ Sapporo 2016 Team3" : "GGJ Sapporo 2016 Team3"
     end
-  end
-end
-
-class Result
-  attr_accessor :user
-  attr_accessor :stage
-  attr_accessor :left
-
-  def initialize(user, stage, left)
-    @user = user
-    @stage = stage
-    @left = left
   end
 end
 
