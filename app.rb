@@ -9,6 +9,10 @@ class RankingServer < Sinatra::Base
   register Sinatra::Contrib
 
   get '/' do
+    @results = []
+    10.times do
+      @results << Result.new("a" * rand(1..10), 1, rand(1..10))
+    end
     slim :index
   end
 
@@ -41,3 +45,16 @@ class RankingServer < Sinatra::Base
     end
   end
 end
+
+class Result
+  attr_accessor :user
+  attr_accessor :stage
+  attr_accessor :left
+
+  def initialize(user, stage, left)
+    @user = user
+    @stage = stage
+    @left = left
+  end
+end
+
