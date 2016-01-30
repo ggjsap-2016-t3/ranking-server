@@ -14,7 +14,7 @@ class RankingServer < Sinatra::Base
 	end
 
 	get '/' do
-		#File.read(File.join('public', 'index.html'))
+		File.read(File.join('public', 'index.html'))
 	end
 
   post '/', provides: :json do
