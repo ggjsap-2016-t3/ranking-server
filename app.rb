@@ -11,7 +11,18 @@ class RankingServer < Sinatra::Base
   end
 
   post '/' do
-
+    connect_opt = YAML.load_file("./config/config.yml")
+    DB = Sequel.postgres(nil, connect_opt)
+    
+    result_json = params[:result]
+    result = JSON.parse(result_json)
+    DB.create_table :results do 
+        String :user, primary_key: true
+        Integer :stage
+        Integer :left
+    end
+    results = DB[:results]
+    results.insert(user: result[:user], stage: result[:stage], left: result[:left])
   end
 
   helpers do
