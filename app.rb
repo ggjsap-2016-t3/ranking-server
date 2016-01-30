@@ -2,6 +2,8 @@ require 'sinatra/base'
 require 'sinatra/contrib'
 require 'slim'
 require 'yaml'
+require 'sequel'
+require 'json'
 
 class RankingServer < Sinatra::Base
   register Sinatra::Contrib
@@ -14,17 +16,22 @@ class RankingServer < Sinatra::Base
     connect_opt = YAML.load_file("./config/config.yml")
     DB = Sequel.postgres('ggjsap2016-t3', connect_opt)
 
-    result_json = params[:result]
-    result = JSON.parse(result_json)
+    result = JSON.parse(params[:result])
+
     unless DB.table_exists?(:results)
       DB.create_table :results do
         String :user, primary_key: true
-        Integer :stage
         Integer :left
       end
     end
-    results = DB[:results]
-    results.insert(user: result[:user], stage: result[:stage], left: result[:left])
+
+    DB.transaction do
+      # UPSERT
+      if DB[:results].where(user: result["user"]).update(left: result["left"]) == 0
+        DB[:results].insert(user: result["user"], left: result["left"])
+      end
+    end
+    "OK"
   end
 
   helpers do
