@@ -1,0 +1,23 @@
+.container
+  .row
+    .col-xs-12
+      h1.page_title
+        a href=uri("/")
+          | GGJSAP 2016 Team3
+
+  .row
+    h2
+      | ランキング
+
+    - @results.each do |result|
+      .panel.panel-default
+        .panel-body
+          dl
+            dt ユーザ名
+            dd = result.user
+
+            dt ステージ名
+            dd = result.stage
+
+            dt 残り手数
+            dd = result.left
